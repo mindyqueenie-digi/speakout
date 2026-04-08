@@ -3,299 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>語思 CALC - 萬用情境口說訓練</title>
+    <title>SpeakOut with Mindy - CALC 訓練器</title>
     <style>
         :root {
-            --primary-blue: #1e2a47; /* 午夜深藍 */
-            --accent-gold: #d4af37; /* 質感流金 */
+            --primary-blue: #1e2a47; 
+            --accent-gold: #d4af37; 
             --gold-gradient: linear-gradient(135deg, #e6c96a, #d4af37);
-            --bg-main: #f4f7f9;
             --bg-card: #ffffff;
             --text-dark: #333333;
-            --text-gray: #666666;
         }
 
         body {
-            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            font-family: 'PingFang TC', sans-serif;
             background-color: var(--primary-blue);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0; padding: 15px;
+        }
+
+        /* 成長進度條 */
+        .progress-container {
+            width: 100%; height: 6px; background: rgba(255,255,255,0.1);
+            position: fixed; top: 0; left: 0;
+        }
+        #progressBar {
+            width: 0%; height: 100%; background: var(--gold-gradient);
+            transition: width 0.3s;
         }
 
         .card-container {
             background-color: var(--bg-card);
-            padding: 25px;
-            border-radius: 25px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            text-align: center;
-            max-width: 550px;
-            width: 100%;
-            border: 2px solid var(--accent-gold);
+            padding: 25px; border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center; max-width: 500px; width: 100%;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            position: relative;
         }
 
-        .mibi-wrapper { height: 110px; margin-bottom: 10px; }
-        .mibi-img { height: 100%; border-radius: 10px; transition: transform 0.3s; }
+        .mibi-wrapper { height: 120px; margin-bottom: 10px; }
+        .mibi-img { height: 100%; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
         .category-tag {
-            background: var(--gold-gradient);
-            color: var(--primary-blue);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 8px;
+            background: var(--gold-gradient); color: var(--primary-blue);
+            padding: 6px 18px; border-radius: 20px;
+            font-size: 0.85em; font-weight: bold; display: inline-block;
         }
 
-        .progress { color: var(--text-gray); font-size: 0.75em; margin-bottom: 10px; }
-
         .chinese-text {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin: 15px 0;
-            color: var(--primary-blue);
-            line-height: 1.4;
-            min-height: 2.8em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 1.5rem; font-weight: bold; margin: 20px 0;
+            color: var(--primary-blue); line-height: 1.5; min-height: 3em;
         }
 
         .english-text {
-            font-size: 1.25rem;
-            color: var(--accent-gold);
-            margin: 15px 0;
-            min-height: 3em;
-            display: none; 
-            line-height: 1.4;
-            padding: 15px;
-            background-color: #fdfaf0;
-            border-radius: 12px;
+            font-size: 1.3rem; color: var(--accent-gold);
+            margin: 15px 0; display: none; padding: 20px;
+            background-color: #fdfaf0; border-radius: 15px;
             border: 1px dashed var(--accent-gold);
-            animation: fadeIn 0.4s ease-out;
+            animation: bounceIn 0.5s;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
-        .nav-btns { display: flex; justify-content: space-between; gap: 10px; }
-
-        button { border: none; padding: 14px; font-size: 1em; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        button:active { transform: scale(0.98); }
-
-        #revealBtn { background: var(--gold-gradient); color: var(--primary-blue); width: 100%; }
-        #nextBtn { background-color: var(--primary-blue); color: white; flex: 2; }
-        #prevBtn { background-color: #eee; color: var(--text-gray); flex: 1; }
-
-        .accent-group { display: none; justify-content: center; gap: 8px; margin-bottom: 10px; }
-        .btn-speak { padding: 8px 12px; font-size: 0.8em; background: #f0f2f5; color: var(--primary-blue); border: 1px solid #ddd; }
-
-        /* 情境選擇器 */
-        .scenario-select {
-            margin-bottom: 15px;
-            padding: 8px;
-            border-radius: 10px;
-            border: 1px solid var(--accent-gold);
-            width: 100%;
-            font-size: 0.9em;
-            color: var(--primary-blue);
-            background: white;
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            70% { transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
         }
+
+        .btn-group { display: flex; flex-direction: column; gap: 12px; }
+        
+        button { border: none; padding: 16px; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+
+        .btn-main { background: var(--gold-gradient); color: var(--primary-blue); width: 100%; box-shadow: 0 4px 15px rgba(212,175,55,0.3); }
+        
+        .nav-btns { display: flex; gap: 10px; }
+        .btn-nav { background: #f0f2f5; color: #666; flex: 1; }
+        .btn-next { background: var(--primary-blue); color: white; flex: 2; }
+
+        /* 錄音與語音控制區 */
+        .control-panel { display: none; margin-bottom: 15px; }
+        .voice-btn {
+            background: white; border: 1px solid #ddd; padding: 8px 12px;
+            font-size: 0.8em; border-radius: 8px; margin: 0 4px;
+        }
+        .record-btn { background: #fff1f0; color: #cf1322; border: 1px solid #ffa39e; }
+        .record-active { background: #cf1322; color: white; animation: pulse 1s infinite; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
     </style>
 </head>
 <body>
 
-    <div class="card-container">
-        <select id="scenarioFilter" class="scenario-select" onchange="filterQuestions()">
-            <option value="all">🌐 全部情境隨機練習</option>
-            <option value="🗣️ 情境一">🗣️ 日常寒暄與閒聊</option>
-            <option value="🗺️ 情境二">🗺️ 問路與交通</option>
-            <option value="🍽️ 情境三">🍽️ 餐廳、買票與飯店</option>
-            <option value="🛍️ 情境四">🛍️ 購物與消費</option>
-            <option value="💡 情境五">💡 抱怨與解決問題</option>
-            <option value="🩺 情境六">🩺 健康與看病</option>
-            <option value="📱 情境七">📱 科技、網路與生活</option>
-            <option value="💼 情境八">💼 工作、學習與規劃</option>
-        </select>
+    <div class="progress-container"><div id="progressBar"></div></div>
 
+    <div class="card-container">
         <div class="mibi-wrapper">
-            <img id="mibi" class="mibi-img" src="https://mindyqueenie-digi.github.io/mindy-toeic-speaking/mibi_listen.jpg">
+            <img id="mibi" class="mibi-img" src="mibi_listen.jpg">
         </div>
 
-        <div id="categoryDisplay" class="category-tag">載入中...</div>
-        <div class="progress" id="progressText">Question 0 / 0</div>
-        <div class="chinese-text" id="question">點擊下方按鈕開始練習</div>
+        <div id="categoryDisplay" class="category-tag">語思 CALC 訓練</div>
+        <div id="progressText" style="font-size: 0.8em; color: #999; margin: 10px 0;">Question 1 / 80</div>
+        
+        <div class="chinese-text" id="question">載入中...</div>
         <div class="english-text" id="answer"></div>
 
-        <div id="accentGroup" class="accent-group">
-            <button class="btn-speak" onclick="speak('en-US')">🇺🇸 美音</button>
-            <button class="btn-speak" onclick="speak('en-GB')">🇬🇧 英音</button>
-            <button class="btn-speak" onclick="speak('en-AU')">🇦🇺 澳音</button>
+        <div id="controlPanel" class="control-panel">
+            <div style="margin-bottom: 10px;">
+                <button class="voice-btn" onclick="speak('en-US')">🇺🇸 美音</button>
+                <button class="voice-btn" onclick="speak('en-GB')">🇬🇧 英音</button>
+                <button class="voice-btn" onclick="speak('en-AU')">🇦🇺 澳音</button>
+            </div>
+            <button id="recBtn" class="voice-btn record-btn" onclick="toggleRecord()">🎙️ 錄下我的發音</button>
+            <button id="playRecBtn" class="voice-btn" onclick="playRecord()" style="display:none;">▶️ 聽我的錄音</button>
         </div>
 
         <div class="btn-group">
-            <button onclick="showAnswer()" id="revealBtn">看英文 Show Answer</button>
+            <button onclick="showAnswer()" id="revealBtn" class="btn-main">看英文 Show Answer</button>
             <div class="nav-btns">
-                <button onclick="prevQuestion()" id="prevBtn">◀</button>
-                <button onclick="nextQuestion()" id="nextBtn" style="display:none;">下一題 Next ▶</button>
+                <button onclick="prevQuestion()" class="btn-nav">◀</button>
+                <button onclick="nextQuestion()" id="nextBtn" class="btn-next" style="display:none;">下一題 Next ▶</button>
             </div>
         </div>
     </div>
 
     <script>
-        const allQuestions = [
+        // ... 此處省略之前的 allQuestions 陣列 (請保留您之前貼過來的 80 題數據) ...
+        const questions = [
             { cat: "🗣️ 情境一", zh: "很高興認識你。", en: "Pleased to meet you." },
-            { cat: "🗣️ 情境一", zh: "天氣真好，不是嗎？", en: "Nice day, isn't it?" },
-            { cat: "🗣️ 情境一", zh: "你具體是從哪裡來的？", en: "Where exactly do you come from?" },
-            { cat: "🗣️ 情境一", zh: "週末過得好嗎？", en: "Did you have a good weekend?" },
-            { cat: "🗣️ 情境一", zh: "還不錯。我沒做什麼特別的事。", en: "Yes, it was OK. I didn't do much." },
-            { cat: "🗣️ 情境一", zh: "噢不！聽到這個我很遺憾。", en: "Oh no! I'm sorry to hear that." },
-            { cat: "🗣️ 情境一", zh: "回頭見。", en: "I'll see you later." },
-            { cat: "🗣️ 情境一", zh: "你在那裡住多久了？", en: "How long have you lived there?" },
-            { cat: "🗣️ 情境一", zh: "你通常花多少時間睡覺？", en: "How much time do you spend sleeping?" },
-            { cat: "🗣️ 情境一", zh: "我覺得壓力沒那麼大之類的。", en: "I'm not too stressed or anything." },
-            { cat: "🗣️ 情境一", zh: "你有休過假嗎？", en: "Do you ever have a holiday?" },
-            { cat: "🗣️ 情境一", zh: "你多常跟父母見面？", en: "How often do you see your parents?" },
-            { cat: "🗣️ 情境一", zh: "你喜歡和家人相處嗎？", en: "Do you enjoy spending time with your family?" },
-            { cat: "🗣️ 情境一", zh: "你跟誰住在一起？", en: "Who do you live with?" },
-            { cat: "🗣️ 情境一", zh: "我們相處時總充滿歡笑。", en: "We have a real laugh together." },
-            { cat: "🗺️ 情境二", zh: "不好意思，我們想去...", en: "Excuse me, we're trying to get to..." },
-            { cat: "🗺️ 情境二", zh: "這站牌搭對嗎？", en: "Is this the right bus stop?" },
-            { cat: "🗺️ 情境二", zh: "從這裡過去大約需要十分鐘。", en: "It takes about ten minutes from here." },
-            { cat: "🗺️ 情境二", zh: "直直走就好。", en: "Just go straight on." },
-            { cat: "🗺️ 情境二", zh: "在第一個路口左轉。", en: "Take the first left." },
-            { cat: "🗺️ 情境二", zh: "繼續走大約十五分鐘，直到你抵達路的盡頭。", en: "Keep going for about fifteen minutes until you reach the end of the road." },
-            { cat: "🗺️ 情境二", zh: "你一定找得到 / 不會錯過。", en: "You can't miss it." },
-            { cat: "🗺️ 情境二", zh: "你能在地圖上指給我看嗎？", en: "Can you show me on the map?" },
-            { cat: "🗺️ 情境二", zh: "會很遠嗎？", en: "Is it far?" },
-            { cat: "🗺️ 情境二", zh: "抱歉，我不知道 / 毫無頭緒。", en: "Sorry, I've no idea." },
-            { cat: "🗺️ 情境二", zh: "就在那邊而已。", en: "It's just over there." },
-            { cat: "🗺️ 情境二", zh: "你知道下一班火車什麼時候會來嗎？", en: "Do you know when the next train will be arriving?" },
-            { cat: "🗺️ 情境二", zh: "這邊的交通狀況如何？大眾運輸方便嗎？", en: "What about getting around? What's the public transport like?" },
-            { cat: "🗺️ 情境二", zh: "車資相當便宜，而且很有效率。", en: "It's quite cheap, and it's efficient." },
-            { cat: "🗺️ 情境二", zh: "請問有需要我幫您叫計程車嗎？", en: "Would you like me to call a taxi?" },
-            { cat: "🍽️ 情境三", zh: "我想訂週六晚上四個人的位子。", en: "I'd like to book a table for four on Saturday night." },
-            { cat: "🍽️ 情境三", zh: "讓我確認一下。", en: "Let me just have a look." },
-            { cat: "🍽️ 情境三", zh: "恐怕完全沒有位子了。", en: "Nothing at all, I'm afraid." },
-            { cat: "🍽️ 情境三", zh: "請問您的大名？", en: "Can I take your name, please?" },
-            { cat: "🍽️ 情境三", zh: "等一下...可以請你重複一次嗎？", en: "Hang on... can you repeat that, please?" },
-            { cat: "🍽️ 情境三", zh: "請問有可能借一個（轉接頭）嗎？", en: "Would it be possible to borrow one?" },
-            { cat: "🍽️ 情境三", zh: "請問需要我派人送一個到您房間嗎？", en: "Do you want me to send one up to your room?" },
-            { cat: "🍽️ 情境三", zh: "請問可以幫我們訂兩張票嗎？", en: "Would you be able to book two tickets for us?" },
-            { cat: "🍽️ 情境三", zh: "可以請您在這邊稍等我一下嗎？", en: "If you'll just wait here while I..." },
-            { cat: "🍽️ 情境三", zh: "您對座位有什麼偏好嗎？", en: "Do you have any preference about the seats?" },
-            { cat: "🍽️ 情境三", zh: "我想更改日期。", en: "I'd like to change the date." },
-            { cat: "🍽️ 情境三", zh: "請問您還有哪幾天有位子？", en: "What dates do you still have seats for?" },
-            { cat: "🍽️ 情境三", zh: "抱歉，可以請你說慢一點嗎？", en: "Sorry, can you slow down, please?" },
-            { cat: "🍽️ 情境三", zh: "抱歉，可以請你大聲一點嗎？", en: "Can you speak up, please?" },
-            { cat: "🍽️ 情境三", zh: "我在車站這裡太吵了，什麼都聽不到。", en: "I'm at the station and I can't hear a thing." },
-            { cat: "🛍️ 情境四", zh: "需要幫忙嗎？", en: "Can I help you?" },
-            { cat: "🛍️ 情境四", zh: "不用，謝謝，我只是看看。", en: "No, thanks. I'm just looking." },
-            { cat: "🛍️ 情境四", zh: "如果有需要隨時跟我說。", en: "Just let me know if you need anything." },
-            { cat: "🛍️ 情境四", zh: "請問您有在找什麼特定的東西嗎？", en: "Are you looking for anything in particular?" },
-            { cat: "🛍️ 情境四", zh: "請問這個有大一點的尺寸嗎？", en: "Do you have one of these in a larger size?" },
-            { cat: "🛍️ 情境四", zh: "這個尺寸不合。", en: "It doesn't fit." },
-            { cat: "🛍️ 情境四", zh: "讓我去幫你查一下。", en: "Let me just go and check for you." },
-            { cat: "🛍️ 情境四", zh: "抱歉，這就是我們目前所有的庫存了。", en: "I'm sorry. This is all we've got in stock at the moment." },
-            { cat: "🛍️ 情境四", zh: "我可以看一下嗎？", en: "Can I have a look?" },
-            { cat: "🛍️ 情境四", zh: "這個多少錢？", en: "How much is it?" },
-            { cat: "🛍️ 情境四", zh: "請問您要付現還是刷卡？", en: "Are you paying by cash or credit card?" },
-            { cat: "🛍️ 情境四", zh: "麻煩請輸入您的密碼。", en: "Can you enter your PIN, please?" },
-            { cat: "🛍️ 情境四", zh: "請問下一位是誰？", en: "Who's next, please?" },
-            { cat: "🛍️ 情境四", zh: "你們收萬事達卡嗎？", en: "Do you take Mastercard?" },
-            { cat: "🛍️ 情境四", zh: "麻煩請在這裡簽名。", en: "Can you just sign here, please?" },
-            { cat: "💡 情境五", zh: "冷氣有點問題。", en: "There's a problem with the air conditioning." },
-            { cat: "💡 情境五", zh: "我剛剛試著打開它，但它沒反應。", en: "I've just tried to switch it on, but it doesn't work." },
-            { cat: "💡 情境五", zh: "是完全沒反應嗎？", en: "Is it completely dead?" },
-            { cat: "💡 情境五", zh: "我們會立刻為您處理 / 查看。", en: "We'll look into it right away." },
-            { cat: "💡 情境五", zh: "我會派人上樓去。", en: "I'll send someone up." },
-            { cat: "💡 情境五", zh: "不好意思，我要客訴。", en: "I'm afraid I have a complaint." },
-            { cat: "💡 情境五", zh: "我可以跟經理說話嗎？", en: "Could I speak to the manager, please?" },
-            { cat: "💡 情境五", zh: "抱歉，我剛沒聽清楚。", en: "Sorry, I didn't catch that." },
-            { cat: "💡 情境五", zh: "想請問您是否能幫我一個忙。", en: "I was wondering if you could help me." },
-            { cat: "💡 情境五", zh: "不好意思，我們現在真的無能為力。", en: "I'm sorry but there's nothing we can do at the moment." },
-            { cat: "🩺 情境六", zh: "怎麼了嗎？/ 哪裡不舒服？", en: "What's the matter?" },
-            { cat: "🩺 情境六", zh: "我覺得很不舒服。我一直頭痛。", en: "I feel terrible. I get these headaches." },
-            { cat: "🩺 情境六", zh: "你這個狀況有多久了？", en: "How long have you had this problem?" },
-            { cat: "🩺 情境六", zh: "你最近有很煩惱或壓力很大嗎？", en: "And are you very worried or under pressure at the moment?" },
-            { cat: "🩺 情境六", zh: "你的飲食健康嗎？", en: "Do you have a healthy diet?" },
-            { cat: "🩺 情境六", zh: "我覺得這沒什麼好擔心的。", en: "I don't think it's anything to worry about." },
-            { cat: "🩺 情境六", zh: "走路的時候會痛。", en: "It hurts when I walk." },
-            { cat: "🩺 情境六", zh: "你有去弄到它嗎？", en: "Did you do anything to it?" },
-            { cat: "🩺 情境六", zh: "發生了什麼事？", en: "What happened?" },
-            { cat: "🩺 情境六", zh: "哪裡會痛？", en: "Where does it hurt?" },
-            { cat: "📱 情境七", zh: "我做什麼事都依賴手機。", en: "I use my phone for everything." },
-            { cat: "📱 情境七", zh: "我沒有手機活不下去。", en: "I couldn't live without my phone." },
-            { cat: "📱 情境七", zh: "那是個能和大家分享事物的好方法。", en: "It's a great way to tell people about..." },
-            { cat: "📱 情境七", zh: "我大部分時間都在傳訊息。", en: "I text most of the time because it's quick and cheap." },
-            { cat: "📱 情境七", zh: "通話時它有時候會當機。", en: "Sometimes it crashes during the phone call." },
-            { cat: "📱 情境七", zh: "我真的看不出有什麼問題。", en: "I really don't see what the problem is." },
-            { cat: "📱 情境七", zh: "恐怕我完全無法同意。", en: "I'm afraid I totally disagree." },
-            { cat: "📱 情境七", zh: "我對於...這個事實感到非常厭煩。", en: "I get really fed up with the fact that..." },
-            { cat: "📱 情境七", zh: "當...的時候我會覺得超煩。", en: "I get really annoyed when..." },
-            { cat: "📱 情境七", zh: "我認為最偉大的發明是...", en: "I think the most important invention is..." },
-            { cat: "💼 情境八", zh: "我偏好獨自工作。", en: "I prefer working alone." },
-            { cat: "💼 情境八", zh: "我不介意做些會弄髒手的工作。", en: "I don't mind getting my hands dirty." },
-            { cat: "💼 情境八", zh: "熱衷於學習新事物。", en: "I'm keen on learning new things." },
-            { cat: "💼 情境八", zh: "我討厭在壓力下工作。", en: "I hate working under pressure." },
-            { cat: "💼 情境八", zh: "我只想當自己的老闆。", en: "I just want to be my own boss." },
-            { cat: "💼 情境八", zh: "聽起來是個很棒的計畫。你會選哪個？", en: "That sounds like a great plan. Which would you choose?" },
-            { cat: "💼 情境八", zh: "很多學生因為怕犯錯而不敢開口。", en: "A lot of my students are too shy to speak." },
-            { cat: "💼 情境八", zh: "母語人士講話真的很快，很難懂。", en: "Native speakers speak really fast and it's difficult to understand them." }
+            // ... (請將您之前的 80 題數據完整放在這裡) ...
         ];
 
-        let questions = [...allQuestions];
         let currentIndex = 0;
-        const MIBI_LISTEN = "mibi_listen.jpg";
-const MIBI_HAPPY = "mibi_happy.jpg";
-
-        function filterQuestions() {
-            const val = document.getElementById('scenarioFilter').value;
-            if(val === 'all') {
-                questions = [...allQuestions].sort(() => Math.random() - 0.5);
-            } else {
-                questions = allQuestions.filter(q => q.cat === val);
-            }
-            currentIndex = 0;
-            updateCard();
-        }
+        let mediaRecorder;
+        let audioChunks = [];
 
         function updateCard() {
-            if(questions.length === 0) return;
             const q = questions[currentIndex];
-            document.getElementById('categoryDisplay').textContent = q.cat;
             document.getElementById('question').textContent = q.zh;
             document.getElementById('answer').textContent = q.en;
+            document.getElementById('categoryDisplay').textContent = q.cat;
             document.getElementById('progressText').textContent = `Question ${currentIndex + 1} / ${questions.length}`;
             
+            // 更新進度條
+            const prog = ((currentIndex + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = prog + '%';
+
+            // 重置介面
             document.getElementById('answer').style.display = 'none';
-            document.getElementById('accentGroup').style.display = 'none';
+            document.getElementById('controlPanel').style.display = 'none';
             document.getElementById('revealBtn').style.display = 'block';
             document.getElementById('nextBtn').style.display = 'none';
-            document.getElementById('mibi').src = MIBI_LISTEN;
-            document.getElementById('mibi').style.transform = "scale(1)";
+            document.getElementById('mibi').src = 'mibi_listen.jpg';
+            document.getElementById('playRecBtn').style.display = 'none';
         }
 
         function showAnswer() {
             document.getElementById('answer').style.display = 'block';
-            document.getElementById('accentGroup').style.display = 'flex';
+            document.getElementById('controlPanel').style.display = 'block';
             document.getElementById('revealBtn').style.display = 'none';
             document.getElementById('nextBtn').style.display = 'block';
-            document.getElementById('mibi').src = MIBI_HAPPY;
-            document.getElementById('mibi').style.transform = "scale(1.1)";
+            document.getElementById('mibi').src = 'mibi_happy.jpg';
+            document.getElementById('mibi').style.transform = "scale(1.2) rotate(5deg)";
         }
 
         function nextQuestion() {
             if (currentIndex < questions.length - 1) {
                 currentIndex++;
                 updateCard();
-            } else {
-                alert("太棒了！練習完畢。將重新隨機排序題目。");
-                filterQuestions();
             }
         }
 
@@ -307,17 +179,43 @@ const MIBI_HAPPY = "mibi_happy.jpg";
         }
 
         function speak(lang) {
-            const text = questions[currentIndex].en;
-            const msg = new SpeechSynthesisUtterance();
-            msg.text = text;
+            const msg = new SpeechSynthesisUtterance(questions[currentIndex].en);
             msg.lang = lang;
-            msg.rate = 0.85;
-            window.speechSynthesis.cancel(); // 停止目前的播放
+            msg.rate = 0.8;
+            window.speechSynthesis.cancel();
             window.speechSynthesis.speak(msg);
         }
 
-        // 初始化隨機排序
-        filterQuestions();
+        // 簡單錄音功能
+        async function toggleRecord() {
+            const btn = document.getElementById('recBtn');
+            if (btn.classList.contains('record-active')) {
+                mediaRecorder.stop();
+                btn.classList.remove('record-active');
+                btn.textContent = '🎙️ 重新錄音';
+            } else {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audio = new Audio(audioUrl);
+                    window.currentRecording = audio;
+                    document.getElementById('playRecBtn').style.display = 'inline-block';
+                };
+                mediaRecorder.start();
+                btn.classList.add('record-active');
+                btn.textContent = '⏹️ 停止錄音';
+            }
+        }
+
+        function playRecord() {
+            if (window.currentRecording) window.currentRecording.play();
+        }
+
+        updateCard();
     </script>
 </body>
 </html>
